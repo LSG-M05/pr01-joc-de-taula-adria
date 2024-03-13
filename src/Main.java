@@ -1,17 +1,41 @@
-// Press Shift twice to open the Search Everywhere dialog and type `show whitespaces`,
-// then press Enter. You can now see whitespace characters in your code.
+import java.util.Scanner;
 public class Main {
-    public static void main(String[] args) {
-        // Press Alt+Intro with your caret at the highlighted text to see how
-        // IntelliJ IDEA suggests fixing it.
-        System.out.printf("Hello and welcome!");
 
-        // Press Mayús+F10 or click the green arrow button in the gutter to run the code.
-        for (int i = 1; i <= 5; i++) {
-
-            // Press Mayús+F9 to start debugging your code. We have set one breakpoint
-            // for you, but you can always add more by pressing Ctrl+F8.
-            System.out.println("i = " + i);
+    public static int leerInt(String mensaje) {
+        Scanner input = new Scanner(System.in);
+        System.out.print(mensaje);
+        while (!input.hasNextInt()) {
+            System.out.println("Entrada no válida. Por favor, introduzca un número.");
+            input.next();
+            System.out.print(mensaje);
         }
+        return input.nextInt();
+    }
+
+    public static void MenuPrincipal() {
+        Scanner input = new Scanner(System.in);
+        int opcion = 0;
+
+        do {
+            System.out.println("1. Iniciar Juego");
+            System.out.println("2. Salir");
+
+            opcion = leerInt("Seleccione una opción: ");
+
+                switch (opcion) {
+                    case 1:
+                        System.out.println("Iniciando el juego...");
+                        break;
+                    case 2:
+                        System.out.println("Saliendo del programa...");
+                        break;
+                    default:
+                        System.out.println("Opción no válida. Por favor, intente de nuevo.");
+                        break;
+                }
+        }while (opcion != 2);
+    }
+    public static void main(String[] args) {
+        MenuPrincipal();
     }
 }
