@@ -1,4 +1,4 @@
-# El Joc Del Llop
+# El Joc Del Llop :wolf:
 
 Em dic Adrià Baltrons i aquest és el meu joc de taula fet en JAVA. :smiley:
 
