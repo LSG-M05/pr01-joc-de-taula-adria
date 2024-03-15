@@ -2,52 +2,81 @@ import java.util.Scanner;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 public class Main {
-
-    private static void iniciarJuego() {
-
-
-        boolean juegoActivo = true;
-
-    }
-
-
     enum Rol {
-        HOMBRE_LOBO, ALDEANO, NARRADOR, VIDENTE, BRUJA, LADRON, NINA, CUPIDO, CAZADOR
+        HOMBRE_LOBO, ALDEANO, NARRADOR, VIDENTE, BRUJA
     }
 
-    class Jugador {
+    private static void faseHombresLobo() {
+
+        System.out.println("Los hombres lobo se despiertan y eligen una víctima.");
+
+    }
+
+    public static void printarJugadores(ArrayList<Jugador> jugadores){
+        System.out.println("Lista de Jugadores:");
+        int i = 0;
+        for (Jugador jugador : jugadores) {
+            System.out.println("- "+ (i + 1) + jugador.getNombre() + "");
+        }
+    }
+
+
+
+    static class Jugador {
         String nombre;
         Rol rol;
 
+        Jugador(String nombre) {
+            this.nombre = nombre;
+        }
+
+        public String getNombre(){
+            return this.nombre;
+        }
+
+        public void setRol(Rol rol) {
+            this.rol = rol;
+        }
     }
 
-    public class AsignacionDeRoles {
-        public static void asignarRoles(List<Jugador> jugadores) {
-            Collections.shuffle(jugadores);
-            int totalJugadores = jugadores.size();
-            int hombresLobo = Math.max(totalJugadores / 4, 1);
+    public static void iniciarJuego() {
+        List<Jugador> jugadores = configurarJugadores();
+        asignarRoles(jugadores);
+    }
 
-            ArrayList<Rol> roles = new ArrayList<>();
-            roles.add(Rol.NARRADOR);
-            roles.add(Rol.VIDENTE);
-            roles.add(Rol.BRUJA);
-            roles.add(Rol.LADRON);
-            roles.add(Rol.NINA);
-            roles.add(Rol.CUPIDO);
-            roles.add(Rol.CAZADOR);
-            for (int i = 0; i < hombresLobo; i++) {
-                roles.add(Rol.HOMBRE_LOBO);
-            }
-            while (roles.size() < totalJugadores) {
-                roles.add(Rol.ALDEANO);
-            }
+    private static List<Jugador> configurarJugadores() {
+        Scanner input = new Scanner(System.in);
+        List<Jugador> jugadores = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            System.out.print("Introduzca el nombre del jugador " + (i + 1) + ": ");
+            String nombre = input.nextLine();
+            jugadores.add(new Jugador(nombre));
+        }
+        return jugadores;
+    }
 
-            Collections.shuffle(roles);
+    public static void asignarRoles(List<Jugador> jugadores) {
+        Collections.shuffle(jugadores);
+        int totalJugadores = jugadores.size();
+        int hombresLobo = totalJugadores / 4;
 
-            for (int i = 0; i < totalJugadores; i++) {
-                jugadores.get(i).rol = roles.get(i);
-            }
+        ArrayList<Rol> roles = new ArrayList<>();
+        roles.add(Rol.NARRADOR);
+        roles.add(Rol.VIDENTE);
+        roles.add(Rol.BRUJA);
+        for (int i = 0; i < hombresLobo; i++) {
+            roles.add(Rol.HOMBRE_LOBO);
+        }
+        while (roles.size() < totalJugadores) {
+            roles.add(Rol.ALDEANO);
+        }
+
+        Collections.shuffle(roles);
+
+        for (int i = 0; i < totalJugadores; i++) {
+            jugadores.get(i).setRol(roles.get(i));
         }
     }
     public static int leerInt(String mensaje) {
@@ -72,30 +101,10 @@ public class Main {
         return input.nextBoolean();
     }
 
-    public static void MenuPrincipal() {
-        Scanner input = new Scanner(System.in);
-        int opcion = 0;
-
-        do {
-            System.out.println("1. Iniciar Juego");
-            System.out.println("2. Salir");
-
-            opcion = leerInt("Seleccione una opción: ");
-
-                switch (opcion) {
-                    case 1:
-                        System.out.println("Iniciando el juego...");
-                        break;
-                    case 2:
-                        System.out.println("Saliendo del programa...");
-                        break;
-                    default:
-                        System.out.println("Opción no válida. Por favor, intente de nuevo.");
-                        break;
-                }
-        }while (opcion != 2);
-    }
     public static void main(String[] args) {
-        MenuPrincipal();
+        iniciarJuego();
+        printarJugadores(jugado);
+
+
     }
 }
