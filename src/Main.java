@@ -8,12 +8,32 @@ public class Main {
         HOMBRE_LOBO, ALDEANO, NARRADOR, VIDENTE, BRUJA
     }
 
+    private static void faseHombresLobo() {
+
+        System.out.println("Los hombres lobo se despiertan y eligen una víctima.");
+
+    }
+
+    public static void printarJugadores(ArrayList<Jugador> jugadores){
+        System.out.println("Lista de Jugadores:");
+        int i = 0;
+        for (Jugador jugador : jugadores) {
+            System.out.println("- "+ (i + 1) + jugador.getNombre() + "");
+        }
+    }
+
+
+
     static class Jugador {
         String nombre;
         Rol rol;
 
         Jugador(String nombre) {
             this.nombre = nombre;
+        }
+
+        public String getNombre(){
+            return this.nombre;
         }
 
         public void setRol(Rol rol) {
@@ -24,7 +44,6 @@ public class Main {
     public static void iniciarJuego() {
         List<Jugador> jugadores = configurarJugadores();
         asignarRoles(jugadores);
-
     }
 
     private static List<Jugador> configurarJugadores() {
@@ -41,7 +60,7 @@ public class Main {
     public static void asignarRoles(List<Jugador> jugadores) {
         Collections.shuffle(jugadores);
         int totalJugadores = jugadores.size();
-        int hombresLobo = Math.max(totalJugadores / 4, 1);
+        int hombresLobo = totalJugadores / 4;
 
         ArrayList<Rol> roles = new ArrayList<>();
         roles.add(Rol.NARRADOR);
@@ -60,8 +79,32 @@ public class Main {
             jugadores.get(i).setRol(roles.get(i));
         }
     }
+    public static int leerInt(String mensaje) {
+        Scanner input = new Scanner(System.in);
+        System.out.print(mensaje);
+        while (!input.hasNextInt()) {
+            System.out.println("Entrada no válida. Por favor, introduzca un número.");
+            input.next();
+            System.out.print(mensaje);
+        }
+        return input.nextInt();
+    }
+
+    private static boolean leerBoolean(String mensaje) {
+        Scanner input = new Scanner(System.in);
+        System.out.print(mensaje + " (true/false): ");
+        while (!input.hasNextBoolean()) {
+            System.out.println("Entrada no válida. Por favor, ingrese 'true' o 'false'.");
+            input.next();
+            System.out.print(mensaje + " (true/false): ");
+        }
+        return input.nextBoolean();
+    }
 
     public static void main(String[] args) {
         iniciarJuego();
+        printarJugadores(jugado);
+
+
     }
 }
