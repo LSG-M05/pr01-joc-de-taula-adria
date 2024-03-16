@@ -5,7 +5,7 @@ import java.util.List;
 
 public class Main {
     enum Rol {
-        HOMBRE_LOBO, ALDEANO, NARRADOR, VIDENTE
+        HOMBRE_LOBO, ALDEANO,VIDENTE
     }
 
     // VIDENTE
@@ -14,6 +14,12 @@ public class Main {
         if (vidente != null) {
             System.out.println("La vidente es: " + vidente.nombre);
             System.out.println("Se despierta la vidente");
+            System.out.println(vidente.nombre + ", elige a un jugador para revelar su rol:");
+            for (int i = 0; i < jugadores.size(); i++) {
+                if (!jugadores.get(i).nombre.equals(vidente.nombre)) {
+                    System.out.println((i + 1) + ". " + jugadores.get(i).nombre);
+                }
+            }
             revelarRolJugador(jugadores, vidente.nombre);
         } else {
             System.out.println("No hay una vidente en este juego.");
@@ -30,12 +36,7 @@ public class Main {
     }
 
     private static void revelarRolJugador(List<Jugador> jugadores, String nombreVidente) {
-        System.out.println(nombreVidente + ", elige a un jugador para revelar su rol:");
-        for (int i = 0; i < jugadores.size(); i++) {
-            if (!jugadores.get(i).nombre.equals(nombreVidente)) {
-                System.out.println((i + 1) + ". " + jugadores.get(i).nombre);
-            }
-        }
+
         System.out.print("Selecciona el número del jugador: ");
         int eleccion = leerInt(" ");
         Jugador elegido = jugadores.get(eleccion - 1);
@@ -50,10 +51,19 @@ public class Main {
     // VIDENTE FIN
 
     //HOMBRES LOBO
-    public static void accionHombresLobo(List<Jugador> jugadores) {
+    public static void faseHombresLobo(List<Jugador> jugadores) {
         List<Jugador> hombresLobo = encontrarHombresLobo(jugadores);
-            System.out.println("Es la fase de los hombres lobo. Elijan a su víctima:");
-            Jugador victima = elegirVictima(jugadores, hombresLobo);
+            System.out.println("Estos son los hombres lobo:");
+            for (Jugador hombreLobo : hombresLobo) {
+                System.out.println(hombreLobo.nombre);
+            }
+            System.out.println("Es la fase de los hombres lobo. Elegir a vuestra víctima:");
+            for (int i = 0; i < jugadores.size(); i++) {
+                if (!jugadores.get(i).rol.equals(Rol.HOMBRE_LOBO)) {
+                    System.out.println((i + 1) + ". " + jugadores.get(i).nombre);
+                }
+            }
+            Jugador victima = elegirVictima(jugadores);
             System.out.println("Los hombres lobo han elegido a " + victima.nombre + " como su víctima.");
             eliminarJugador(jugadores, victima.nombre);
 
@@ -70,25 +80,32 @@ public class Main {
         return hombresLobo;
     }
 
-    private static Jugador elegirVictima(List<Jugador> jugadores, List<Jugador> hombresLobo) {
-        System.out.println("Elige a la víctima:");
-        for (int i = 0; i < jugadores.size(); i++) {
-            System.out.println((i + 1) + ". " + jugadores.get(i).nombre);
-        }
+    private static Jugador elegirVictima(List<Jugador> jugadores) {
         System.out.print("Selecciona el número de la víctima: ");
         int eleccion = leerInt("");
         return jugadores.get(eleccion - 1);
     }
 
+    public static void faseDia(List<Jugador> jugadores) {
+        System.out.println("Buenos dias, os notifico que...");
+        System.out.println(LastDeath);
+        printarJugadores(jugadores);
+        int option = leerInt("¿Desean eliminar a alguien hoy? Si es así, pulsar 1. Si no, introduzca 0 para no eliminar a nadie: ");
+        printarJugadores(jugadores);
+        if (option == 0){
+            System.out.println("Skipeando...");
+        }
+        else if (option == 1){
+            Jugador victima = elegirVictima(jugadores);
+            System.out.println("Habeis " + victima.nombre + " como vuestra víctima.");
+            System.out.println("Su rol era " + victima.rol);
+            eliminarJugador(jugadores, victima.nombre);
+        }
+    }
+
     private static void faseDormir() {
         System.out.println(" ");
         System.out.println("Se hace de noche, la aldea duerme, los jugadores cierran los ojos");
-    }
-
-    private static void faseHombresLobo() {
-
-        System.out.println("Los hombres lobo se despiertan y eligen una víctima.");
-
     }
 
     public static void printarJugadores(List<Jugador> jugadores){
@@ -98,6 +115,7 @@ public class Main {
             System.out.print("-"+ (i + 1) + " "+ jugador.getNombre() + " ");
             i++;
         }
+        System.out.println(" ");
     }
 
 
@@ -120,7 +138,6 @@ public class Main {
     }
 
     private static List<Jugador> configurarJugadores() {
-        Scanner input = new Scanner(System.in);
         List<Jugador> jugadores = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
             System.out.print("Introduzca el nombre del jugador " + (i + 1) + ": ");
@@ -130,9 +147,12 @@ public class Main {
         return jugadores;
     }
 
+    private static String LastDeath = "";
+
     public static void eliminarJugador(List<Jugador> jugadores, String nombreJugador) {
         jugadores.removeIf(jugador -> jugador.nombre.equals(nombreJugador));
-        System.out.println(nombreJugador + " ha sido eliminado de la partida.");
+        String JugadorElim = nombreJugador + " ha sido eliminado de la partida.";
+        LastDeath = JugadorElim;
     }
 
     public static void asignarRoles(List<Jugador> jugadores) {
@@ -141,7 +161,6 @@ public class Main {
         int hombresLobo = totalJugadores / 4;
 
         ArrayList<Rol> roles = new ArrayList<>();
-        roles.add(Rol.NARRADOR);
         roles.add(Rol.VIDENTE);
         for (int i = 0; i < hombresLobo; i++) {
             roles.add(Rol.HOMBRE_LOBO);
@@ -200,7 +219,8 @@ public class Main {
         printarJugadores(jugadores);
         faseDormir();
         faseVidente(jugadores);
-        faseHombresLobo();
+        faseHombresLobo(jugadores);
+        faseDia(jugadores);
     }
 
     public static void main(String[] args) {
