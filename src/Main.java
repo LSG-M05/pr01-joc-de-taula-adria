@@ -57,7 +57,7 @@ public class Main {
             for (Jugador hombreLobo : hombresLobo) {
                 System.out.println(hombreLobo.nombre);
             }
-            System.out.println("Es la fase de los hombres lobo. Elegir a vuestra víctima:");
+            System.out.println("Los hombres lobo se despiertan. Elegir a vuestra víctima:");
             for (int i = 0; i < jugadores.size(); i++) {
                 if (!jugadores.get(i).rol.equals(Rol.HOMBRE_LOBO)) {
                     System.out.println((i + 1) + ". " + jugadores.get(i).nombre);
@@ -79,7 +79,7 @@ public class Main {
         }
         return hombresLobo;
     }
-
+    // HOMBRES LOBO FIN
     private static Jugador elegirVictima(List<Jugador> jugadores) {
         System.out.print("Selecciona el número de la víctima: ");
         int eleccion = leerInt("");
@@ -148,9 +148,25 @@ public class Main {
     }
 
     private static String LastDeath = "";
+    private static Integer deathLobo = 0;
+    private static Integer deathInocent = 0;
 
     public static void eliminarJugador(List<Jugador> jugadores, String nombreJugador) {
-        jugadores.removeIf(jugador -> jugador.nombre.equals(nombreJugador));
+        Jugador jugadorAEliminar = jugadores.stream()
+                .filter(jugador -> jugador.nombre.equals(nombreJugador))
+                .findFirst()
+                .orElse(null);
+
+        if (jugadorAEliminar != null) {
+            if (jugadorAEliminar.rol == Rol.HOMBRE_LOBO) {
+                deathLobo++;
+            }
+            else {
+                deathInocent++;
+            }
+            jugadores.remove(jugadorAEliminar);
+            System.out.println(nombreJugador + " ha sido eliminado de la partida.");
+        }
         String JugadorElim = nombreJugador + " ha sido eliminado de la partida.";
         LastDeath = JugadorElim;
     }
@@ -158,7 +174,7 @@ public class Main {
     public static void asignarRoles(List<Jugador> jugadores) {
         Collections.shuffle(jugadores);
         int totalJugadores = jugadores.size();
-        int hombresLobo = totalJugadores / 4;
+        int hombresLobo = totalJugadores / 3;
 
         ArrayList<Rol> roles = new ArrayList<>();
         roles.add(Rol.VIDENTE);
@@ -217,10 +233,31 @@ public class Main {
         List<Jugador> jugadores = configurarJugadores();
         asignarRoles(jugadores);
         printarJugadores(jugadores);
-        faseDormir();
-        faseVidente(jugadores);
-        faseHombresLobo(jugadores);
-        faseDia(jugadores);
+        boolean finalJuego = false;
+        do {
+            faseDormir();
+            faseVidente(jugadores);
+            faseHombresLobo(jugadores);
+            faseDia(jugadores);
+            finalJuego = finJuego();
+        }while (!finalJuego);
+
+    }
+
+    public static boolean finJuego(){
+        boolean fin = false;
+        if (deathLobo == 2){
+            System.out.println("¡Todos los lobos han sido eliminados, los Aldeanos ganan!");
+            System.out.println("Fin de la partida...");
+            fin = true;
+            return fin;
+        }
+        else if (deathInocent == 8){
+            System.out.println("¡Todos los aldeanos han sido eliminados, los Lobos ganan!");
+            System.out.println("Fin de la partida...");
+            fin = true;
+        }
+        return fin;
     }
 
     public static void main(String[] args) {
